@@ -52,6 +52,8 @@ const orderProduct = async (req, res) => {
 
 const orderInfo = async (req, res) => {
   const order_id = req.params.order_id;
+  const requesting_user_id = req.user_id;
+
   if (!order_id) {
     return res
       .status(400)
@@ -62,6 +64,12 @@ const orderInfo = async (req, res) => {
     const orderDetails = await Order.findById(order_id)
       .populate("user_id")
       .populate("product_id");
+
+    // verifying the user is asking order details is the authorized user or not
+    if (orderDetails.user_id._id != requesting_user_id) {
+      return res.status(400).json({ success: false, message: "invalid token" });
+    }
+
     if (!orderDetails) {
       return res
         .status(404)
