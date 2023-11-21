@@ -9,6 +9,7 @@ import authHandler from "./routes/auth.js";
 import updateUserHandler from "./routes/updateUser.js";
 import productHandler from "./routes/product.js";
 import orderHandler from "./routes/order.js";
+import userHandler from "./routes/user.js";
 
 const PORT = process.env.PORT;
 const app = express();
@@ -26,6 +27,7 @@ app.use("/api/v1/auth", authHandler);
 app.use("/api/v1/user", updateUserHandler);
 app.use("/api/v1/products", productHandler);
 app.use("/api/v1/order", orderHandler);
+app.use("/api/v1/user/", userHandler);
 
 const connectDB = async () => {
   try {

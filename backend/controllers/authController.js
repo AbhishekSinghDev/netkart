@@ -41,12 +41,13 @@ const signupUser = async (req, res) => {
         });
 
         await newUser.save();
+        res.status(201).json({
+          success: true,
+          message: "user signed up successfully",
+          user: newUser,
+        });
       }
     });
-
-    res
-      .status(201)
-      .json({ success: true, message: "user signed up successfully" });
   } catch (err) {
     console.log(err);
     res.status(500).json({
@@ -84,7 +85,13 @@ const loginUser = async (req, res) => {
         }
 
         if (result) {
-          res.status(201).json({ success: true, message: "login successfull" });
+          res
+            .status(201)
+            .json({
+              success: true,
+              message: "login successfull",
+              user: isUserExists,
+            });
         } else {
           res.status(401).json({
             success: false,

@@ -28,7 +28,7 @@ const orderProduct = async (req, res) => {
     const updateUser = await User.findByIdAndUpdate(
       user_id,
       {
-        $push: { orders: [user_id] },
+        $push: { orders: response._id },
       },
       { new: true }
     );
@@ -50,4 +50,34 @@ const orderProduct = async (req, res) => {
   }
 };
 
-export { orderProduct };
+const orderInfo = async (req, res) => {
+  const order_id = req.params.order_id;
+  if (!order_id) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Order id is not provided" });
+  }
+
+  try {
+    const orderDetails = await Order.findById(order_id)
+      .populate("user_id")
+      .populate("product_id");
+    if (!orderDetails) {
+      return res
+        .status(404)
+        .json({ success: true, message: "no order found with provided id" });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "order found", order: orderDetails });
+  } catch (err) {
+    console.log("Error while fetcing order info");
+    console.log(err);
+    return res.status(500).json({
+      success: false,
+      message: "unable to find order info, internal server info",
+    });
+  }
+};
+
+export { orderProduct, orderInfo };
