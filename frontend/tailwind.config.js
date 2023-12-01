@@ -6,6 +6,7 @@ export default {
       fontFamily: {
         noto: ["Noto Sans", "sans-serif"],
         montserrat: ["Montserrat", "sans-serif"],
+        poppins: ["Poppins", "sans-serif"],
       },
     },
   },
