@@ -3,10 +3,10 @@ import bcrypt from "bcrypt";
 import generateToken from "../service/generateToken.js";
 
 const signupUser = async (req, res) => {
-  const { username, email, password, address, phoneno } = req.body;
+  const { fullname, email, password, address, phoneno } = req.body;
 
   // check weither any of the above field is not empty
-  if (!username || !email || !password || !address || !phoneno) {
+  if (!fullname || !email || !password || !address || !phoneno) {
     res.status(404).json({
       success: false,
       message: "please provide all the details",
@@ -34,7 +34,7 @@ const signupUser = async (req, res) => {
         });
       } else {
         const newUser = new User({
-          username: username,
+          fullname: fullname,
           email: email,
           password: hash,
           address: address,
