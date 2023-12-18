@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./common/header/Header";
 import Pages from "./pages/Pages";
+
 import Data from "./components/Data";
+
 import Cart from "./common/Cart/Cart";
 import Footer from "./common/footer/Footer";
 import Sdata from "./components/shops/Sdata";
@@ -11,8 +13,22 @@ import Sdata from "./components/shops/Sdata";
 import Login from "./components/login/Login";
 import Signup from "./components/signup/signup";
 import ProductDetails from "./components/productDetails/productDetails";
+import axiosInstance from "./axiosInstance";
+import OrderSuccessfull from "./components/order-successfull/OrderSuccessfull";
 
 function App() {
+  const [allProducts, setAllProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      const { data } = await axiosInstance.get("/api/v1/products/all");
+      setAllProducts(data.products);
+      // console.log(data);
+    };
+
+    fetchAllProducts();
+  }, []);
+
   /*
   step1 :  const { productItems } = Data 
   lai pass garne using props
@@ -34,25 +50,16 @@ function App() {
 
   //Step 4 :
   const addToCart = (product) => {
-    // if hamro product alredy cart xa bhane  find garna help garxa
-    const productExit = CartItem.find((item) => item.id === product.id);
-    // if productExit chai alredy exit in cart then will run fun() => setCartItem
-    // ani inside => setCartItem will run => map() ani yo map() chai each cart ma
-    // gayara check garxa if item.id ra product.id chai match bhayo bhane
-    // productExit product chai display garxa
-    // ani increase  exits product QTY by 1
-    // if item and product doesnt match then will add new items
+    const productExit = CartItem.find((item) => item._id === product._id);
     if (productExit) {
       setCartItem(
         CartItem.map((item) =>
-          item.id === product.id
+          item._id === product._id
             ? { ...productExit, qty: productExit.qty + 1 }
             : item
         )
       );
     } else {
-      // but if the product doesnt exit in the cart that mean if card is empty
-      // then new product is added in cart  and its qty is initalize to 1
       setCartItem([...CartItem, { ...product, qty: 1 }]);
     }
   };
@@ -91,7 +98,7 @@ function App() {
           path="/"
           element={
             <Pages
-              productItems={productItems}
+              productItems={allProducts}
               addToCart={addToCart}
               shopItems={shopItems}
             />
@@ -109,7 +116,11 @@ function App() {
         ></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/signup" element={<Signup />} />
-        <Route path="/:product_id" element={<ProductDetails />} />
+        <Route
+          path="/:product_id"
+          element={<ProductDetails addToCart={addToCart} />}
+        />
+        <Route path="/order-successfull" element={<OrderSuccessfull />} />
       </Routes>
       <Footer />
     </>

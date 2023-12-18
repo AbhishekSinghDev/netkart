@@ -1,36 +1,71 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import axiosInstance from "../../axiosInstance";
 
-const ProductDetail = () => {
+import { useNavigate } from "react-router-dom";
+
+const ProductDetail = ({ addToCart }) => {
   let { product_id } = useParams();
+  const [productDetail, setProductDetail] = useState({});
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchDetail = async () => {
+      const { data } = await axiosInstance.get(
+        `/api/v1/products/single/?id=${product_id}`
+      );
+      // console.log(data);
+      setProductDetail(data.product);
+    };
+
+    fetchDetail();
+  }, [product_id]);
 
   const product = {
     id: product_id,
-    name: "Example Product",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    price: 49.99,
-    imageUrl: "https://via.placeholder.com/300",
+    name: productDetail.name,
+    description: productDetail.desc,
+    price: productDetail.price,
+    imageUrl: productDetail.image,
   };
 
   const handleAddToCart = () => {
     // Logic to add the product to the cart
-    console.log("Product added to cart:", product);
+    // console.log("Product added to cart:", product);
+
+    addToCart(product);
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     // Logic for buy now action (redirect to checkout, etc.)
-    console.log("Buy now:", product);
+    let user_token = localStorage.getItem("access_token");
+    user_token = user_token.replace('"', "");
+    user_token = user_token.replace('"', "");
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${user_token}`,
+      },
+    };
+    const body = {
+      product_id: product.id,
+      price: product.price,
+      quantity: 1,
+    };
+    await axiosInstance.post("/api/v1/order", body, config);
+
+    navigate("/order-successfull");
   };
 
   return (
-    <div className="container mx-auto my-8 h-[60vh] flex items-center justify-center">
+    <div className="container mx-auto py-[50vh] my-[300px] h-[60vh] flex items-center justify-center">
       <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
-        <div className="flex flex-col lg:flex-row">
-          <div className="w-full lg:w-1/2">
+        <div className="flex flex-col lg:flex-row items-center justify-center">
+          <div className="w-[300px] h-[400px] p-12">
             <img
               src={product.imageUrl}
               alt={product.name}
-              className="w-full h-auto rounded-lg mb-4"
+              className="w-auto h-auto rounded-lg"
             />
           </div>
           <div className="w-full lg:w-1/2 lg:ml-6">
