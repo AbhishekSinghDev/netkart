@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 const authorizeUser = async (req, res, next) => {
   const userProvidedToken = req.headers.authorization;
-
+  console.log(userProvidedToken);
   if (!userProvidedToken || !userProvidedToken.startsWith("Bearer ")) {
     return res.status(401).json({
       success: false,

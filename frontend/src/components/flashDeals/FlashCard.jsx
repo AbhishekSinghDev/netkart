@@ -42,29 +42,38 @@ const FlashCard = ({ productItems, addToCart }) => {
   };
 
   const handleClick = (e) => {
-    console.log(e);
-    navigate(`/${productItems.id}`);
+    // console.log(e.target.alt);
+    const product_id = e.target.alt;
+    // /:product_id/:product_name/:product_image/:product_price
+    navigate(`/${product_id}`);
   };
 
   return (
     <>
       <Slider {...settings} className="cursor-pointer">
-        {productItems.map((productItems) => {
+        {productItems.map((productItem) => {
           return (
             <div className="box">
-              <div className="product mtop" onClick={handleClick}>
+              <div className="product mtop">
                 <div className="img">
-                  <span className="discount">{productItems.discount}% Off</span>
+                  <span className="discount">
+                    {productItem.discount}10% Off
+                  </span>
                   <div className="flex items-center justify-center">
-                    <img src={productItems.cover} alt="" />
+                    <img
+                      src={productItem.image}
+                      alt={productItem._id}
+                      className="h-[300px] w-[250px]"
+                      onClick={handleClick}
+                    />
                   </div>
                   <div className="product-like">
                     <label>{count}</label> <br />
                     <i className="fa-regular fa-heart" onClick={increment}></i>
                   </div>
                 </div>
-                <div className="product-details">
-                  <h3>{productItems.name}</h3>
+                <div className="product-details text-sm">
+                  <h3 className="text-sm p-0 m-0">{productItem.name}</h3>
                   <div className="rate">
                     <i className="fa fa-star"></i>
                     <i className="fa fa-star"></i>
@@ -73,11 +82,11 @@ const FlashCard = ({ productItems, addToCart }) => {
                     <i className="fa fa-star"></i>
                   </div>
                   <div className="price">
-                    <h4>${productItems.price}.00 </h4>
+                    <h4>${productItem.price}.00 </h4>
                     {/* step : 3  
                      if hami le button ma click garryo bahne 
                     */}
-                    <button onClick={() => addToCart(productItems)}>
+                    <button onClick={() => addToCart(productItem)}>
                       <i className="fa fa-plus"></i>
                     </button>
                   </div>
